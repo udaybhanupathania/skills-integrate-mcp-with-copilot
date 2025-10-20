@@ -6,7 +6,8 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.models import Base, Activity
+from src.models import Base, Activity, User
+from src.auth import get_password_hash
 
 
 def init_db(db_url: str = None):
@@ -31,6 +32,15 @@ def init_db(db_url: str = None):
         print("Seeded initial activities")
     else:
         print("Database already initialized with activities")
+
+    # Seed admin user if none exists
+    if session.query(User).count() == 0:
+        admin = User(email="admin@mergington.edu", name="Administrator", password_hash=get_password_hash("adminpass"), role="admin")
+        session.add(admin)
+        session.commit()
+        print("Seeded admin user: admin@mergington.edu (password: adminpass)")
+    else:
+        print("Users already exist in database")
 
 
 if __name__ == "__main__":
