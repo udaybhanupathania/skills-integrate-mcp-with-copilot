@@ -26,3 +26,20 @@ class Activity(Base):
 
     def set_participants(self, lst):
         self.participants = ",".join(lst)
+
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    name = Column(String(200), nullable=True)
+    # store bcrypt-hashed password
+    password_hash = Column(String(255), nullable=False)
+    # simple role: user / officer / admin
+    role = Column(String(50), default="user")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    def is_admin(self):
+        return self.role == "admin"
